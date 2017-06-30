@@ -91,10 +91,10 @@ const notify = ( last ) => {
                         message:   last.title + ' has been created!',
                         url:       'http://SOMEWIKI.wikia.com/wiki/' + encodeURIComponent( last.title ) + '?useskin=oasis',
                         url_title: last.title
-                },
-                url = uri + serialize( params );
-
-                request.post( url, ( err, res, body ) => {} );
+            },
+            url = uri + serialize( params );
+        
+        request.post( url, ( err, res, body ) => {} );
 };
 
 /**
@@ -116,8 +116,8 @@ const fetchPages = () => {
                                 rclimit:     '10',
                                 rcnamespace: '0',
                                 format:      'json'
-                        },
-                        queryString = wiki + serialize( params );
+                    },
+                    queryString = wiki + serialize( params );
 
                 request.get( queryString, ( err, res, body ) => {
                         if ( err ) reject( err );
