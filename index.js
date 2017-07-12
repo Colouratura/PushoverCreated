@@ -11,6 +11,8 @@
 const fs       = require( 'fs' );
 const request  = require( 'request' );
 
+const WIKI = 'fylkir';
+
 /**
  * fetch the last recorded new page
  *
@@ -20,10 +22,14 @@ const request  = require( 'request' );
  *
  * @return {Promise}
  */
-const readLast = () => {
+const readLast = async () => {
         return new Promise( ( resolve, reject ) => {
                 fs.readFile( 'last.json', 'utf-8', ( err, data ) => {
-                        if ( err ) reject( err );
+                        if ( err )
+                                resolve( {
+                                        title: '',
+                                        timestamp: new Date( null )
+                                } );
 
                         try {
                                 let last = JSON.parse( data );
@@ -49,7 +55,7 @@ const readLast = () => {
  * @param {string} info
  * @return {Promise}
  */
-const saveLast = ( info ) => {
+const saveLast = async ( info ) => {
         return new Promise( ( resolve, reject ) => {
                 let data = JSON.stringify( info );
 
@@ -89,7 +95,7 @@ const notify = ( last ) => {
                         user:      'USERTOKENsdfg8sd89f79s87fg8970',
                         title:     'New Page',
                         message:   last.title + ' has been created!',
-                        url:       'http://SOMEWIKI.wikia.com/wiki/' + encodeURIComponent( last.title ) + '?useskin=oasis',
+                        url:       `http://SOMEWIKI.wikia.com/wiki/${ encodeURIComponent( last.title ) }?useskin=oasis`,
                         url_title: last.title
             },
             url = uri + serialize( params );
@@ -105,9 +111,9 @@ const notify = ( last ) => {
  *
  * @return {Promise}
  */
-const fetchPages = () => {
+const fetchPages = async () => {
         return new Promise( ( resolve, reject ) => {
-                let wiki = 'http://SOMEWIKI.wikia.com/api.php',
+                let wiki = `http://${ WIKI }.wikia.com/api.php`,
                     params = {
                                 action:      'query',
                                 list:        'recentchanges',
@@ -143,7 +149,7 @@ const fetchPages = () => {
  * @param {object} last
  * @return {Promise}
  */
-const processPages = ( pages, last ) => {
+const processPages = async ( pages, last ) => {
         return new Promise( ( resolve, reject ) => {
                 let newest = {
                         title: last.title,
@@ -169,23 +175,18 @@ const processPages = ( pages, last ) => {
 /**
  * Entry point
  */
-const main = () => {
-        readLast()
-                .then( ( last ) => {
-                        fetchPages()
-                                .then( ( pages ) => {
-                                        processPages( pages, last )
-                                                .then( ( last ) => {
-                                                        notify( last );
-                                                        saveLast( last )
-                                                                .then( () => {} )
-                                                                .catch( ( e ) => {} );
-                                                } )
-                                                .catch( ( e ) => {} )
-                                } )
-                                .catch( ( e ) => {} );
-                } )
-                .catch( ( e ) => {} );
+const main = async () => {
+        try {
+                let last = await readLast(),
+                    pages = await fetchPages(),
+                    next = await processPages( pages, last );
+
+                notify( next );
+                saveLast( next );
+        } catch ( e ) { console.log( e ); }
 };
 
-setInterval( main, 30000 );
+( async function () {
+        main();
+        setInterval( main, 30000 );
+}() );

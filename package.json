@@ -1,0 +1,22 @@
+{
+  "name": "pushovercreated",
+  "version": "1.0.0",
+  "description": "A simple application to push new page creations to Pushover",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Colouratura/PushoverCreated.git"
+  },
+  "author": "Avaline Gwyneth Caughdough",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Colouratura/PushoverCreated/issues"
+  },
+  "homepage": "https://github.com/Colouratura/PushoverCreated#readme",
+  "dependencies": {
+    "request": "^2.81.0"
+  }
+}
