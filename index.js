@@ -183,7 +183,7 @@ const main = async () => {
 
                 notify( next );
                 saveLast( next );
-        } catch ( e ) { console.log( e ); }
+        } catch ( e ) {}
 };
 
 ( async function () {
